@@ -16,7 +16,28 @@ app.get('/',(req,res) => {
 })
 
 app.post('/' , line.middleware(config) , (req,res) => {
-    console.log(res.body.events);
+    console.log(req.body.events);
+    Promise.all(req.body.events.map(handleEvent)).then((result)=>res.json(result))
 })
+
+function handleEvent(event){
+    if(event.type !== 'message' || event.message.type != "text"){
+        return Promise.resolve (null);
+    }
+if(event.message.text == "เกอร์มาดิ"){
+    return client.replyMessage(event.replyToken,{
+        type :"sticker",
+        packageId :"4",
+        stickerId:"294"
+    })
+
+}
+        return client.replyMessage(event.replyToken,{
+            type : 'text',
+            text : 'ไม่อยากตอบเยอะเจ็บคอ'
+            //event.message.text
+        })
+    
+}
 
 app.listen(port,() => console.log (`App running : ${port}`))
